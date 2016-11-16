@@ -32,37 +32,56 @@
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+        function mostUsed(obj, id) {
+            // Load the Visualization API and the corechart package.
+            google.charts.load('current', {'packages':['corechart']});
 
-        // Load the Visualization API and the corechart package.
-        google.charts.load('current', {'packages':['corechart']});
+            // Set a callback to run when the Google Visualization API is loaded.
+            google.charts.setOnLoadCallback(drawChart);
 
-        // Set a callback to run when the Google Visualization API is loaded.
-        google.charts.setOnLoadCallback(drawChart);
+            // Callback that creates and populates a data table,
+            // instantiates the pie chart, passes in the data and
+            // draws it.
+            function drawChart() {
 
-        // Callback that creates and populates a data table,
-        // instantiates the pie chart, passes in the data and
-        // draws it.
-        function drawChart() {
+                // Create the data table.
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Aplicativo');
+                data.addColumn('number', 'Tempo');
+                data.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
 
-            // Create the data table.
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Topping');
-            data.addColumn('number', 'Slices');
-            data.addRows([
-                ['Mushrooms', 3],
-                ['Onions', 1],
-                ['Olives', 1],
-                ['Zucchini', 1],
-                ['Pepperoni', 2]
-            ]);
+                var apps = obj.apps;
 
-            // Set chart options
-            var options = {'title':'How Much Pizza I Ate Last Night',
-                'width':235};
+                for (i in apps) {
+                    var name = apps[i].name;
+                    var hours = apps[i].hours;
+                    var minutes = apps[i].minutes;
 
-            // Instantiate and draw our chart, passing in some options.
-            var chart = new google.visualization.PieChart(document.getElementById('email_stats'));
-            chart.draw(data, options);
+                    data.addRow([name, hours + minutes, "<div style='padding: 5px;'><b>"+name+"</b> <br /> "+hours+"h"+minutes+"</div>"]);
+                }
+
+                // data.addRows([
+                //     ['WhatsApp', 120, "<div style='padding: 5px;'><b>WhatsApp</b> <br /> 2h</div>"],
+                //     ['Instagram', 99, "<div style='padding: 5px;'><b>Instagram</b> <br /> 2h</div>"],
+                //     ['YouTube', 150, "<div style='padding: 5px;'><b>YouTube</b> <br /> 2h</div>"],
+                //     ['Snapchat', 130, "<div style='padding: 5px;'><b>Snapchat</b> <br /> 2h</div>"],
+                //     ['Facebook', 140, "<div style='padding: 5px;'><b>Facebook</b> <br /> 2h</div>"]
+                // ]);
+
+                // Set chart options
+                var options = {'legend': "Aplicativos",tooltip: {isHtml: true}, 'width':400, pieHole: 0.4,  pieSliceText: "none"};
+
+                // Instantiate and draw our chart, passing in some options.
+                var chart = new google.visualization.PieChart(document.getElementById(id));
+
+                function selectHandler() {
+                    alert("Testing");
+                }
+
+                google.visualization.events.addListener(chart, 'select', selectHandler);
+
+                chart.draw(data, options);
+            }
         }
     </script>
 </head>
@@ -217,11 +236,42 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Email Statistics</h4>
-                                <p class="category">Last Campaign Performance</p>
+                                <h4 class="title">Aplicativos mais usados</h4>
+                                <p class="category">Em um ano</p>
                             </div>
-                            <div class="content" id="email_stats">
-
+                            <div class="content" id="most_used_year">
+                                <script type="text/javascript">
+                                    var obj = JSON.parse('{"apps": [{"name": "WhatsApp", "hours": 1000, "minutes": 45 }, {"name": "YouTube", "hours": 2500, "minutes": 54 }, {"name": "Snapchat", "hours": 700, "minutes": 41 }, {"name": "Facebook", "hours": 235, "minutes": 12 }]}');
+                                    mostUsed(obj, 'most_used_year');
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Aplicativos mais usados</h4>
+                                <p class="category">Na última semana</p>
+                            </div>
+                            <div class="content" id="most_used_one_week">
+                                <script type="text/javascript">
+                                    var obj = JSON.parse('{"apps": [{"name": "WhatsApp", "hours": 99, "minutes": 23 }, {"name": "YouTube", "hours": 120, "minutes": 54 }, {"name": "Snapchat", "hours": 75, "minutes": 41 }, {"name": "Facebook", "hours": 98, "minutes": 12 }]}');
+                                    mostUsed(obj, 'most_used_one_week');
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Aplicativos mais usados</h4>
+                                <p class="category">Ontem</p>
+                            </div>
+                            <div class="content" id="most_used_yesterday">
+                                <script type="text/javascript">
+                                    var obj = JSON.parse('{"apps": [{"name": "WhatsApp", "hours": 6, "minutes": 23 }, {"name": "YouTube", "hours": 4, "minutes": 54 }, {"name": "Snapchat", "hours": 3, "minutes": 41 }, {"name": "Facebook", "hours": 2, "minutes": 12 }]}');
+                                    mostUsed(obj, 'most_used_yesterday');
+                                </script>
                             </div>
                         </div>
                     </div>
