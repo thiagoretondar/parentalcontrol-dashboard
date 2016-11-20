@@ -4,5 +4,7 @@ spring:
     username: root
     password: toor
     driverClassName: com.mysql.jdbc.Driver
+  profiles: #CONFIG DEFAULT PROFILE
+    active: homolog
 server:
   port: 8082
