@@ -4,3 +4,5 @@ spring:
     username: parental_control_user
     password: parental_app_2016_tcc
     driverClassName: com.mysql.jdbc.Driver
+server:
+  port: 8081
