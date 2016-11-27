@@ -30,9 +30,23 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet"/>
 
+    <!--   Core JS Files   -->
+    <script src="assets/js/jquery-1.10.2.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        function getDate(daysBefore) {
+            var todayTimeStamp = +new Date; // Unix timestamp in milliseconds
+            var oneDayTimeStamp = 1000 * 60 * 60 * 24 * daysBefore; // Milliseconds in a day
+            var diff = todayTimeStamp - oneDayTimeStamp;
+            var newDate = new Date(diff);
+
+            return newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate();
+        }
+    </script>
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        function mostUsed(obj, id) {
+        function mostUsed(apps, id) {
             // Load the Visualization API and the corechart package.
             google.charts.load('current', {'packages':['corechart']});
 
@@ -47,26 +61,15 @@
                 // Create the data table.
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'Aplicativo');
-                data.addColumn('number', 'Tempo');
-                data.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
-
-                var apps = obj.apps;
+                data.addColumn('number', 'Quantitade');
 
                 for (i in apps) {
-                    var name = apps[i].name;
-                    var hours = apps[i].hours;
-                    var minutes = apps[i].minutes;
-
-                    data.addRow([name, hours + minutes, "<div style='padding: 5px;'><b>"+name+"</b> <br /> "+hours+"h"+minutes+"</div>"]);
+                    var name = apps[i].appname;
+                    var quantity = apps[i].quantity;
+                    if (quantity > 0) {
+                        data.addRow([name, quantity]);
+                    }
                 }
-
-                // data.addRows([
-                //     ['WhatsApp', 120, "<div style='padding: 5px;'><b>WhatsApp</b> <br /> 2h</div>"],
-                //     ['Instagram', 99, "<div style='padding: 5px;'><b>Instagram</b> <br /> 2h</div>"],
-                //     ['YouTube', 150, "<div style='padding: 5px;'><b>YouTube</b> <br /> 2h</div>"],
-                //     ['Snapchat', 130, "<div style='padding: 5px;'><b>Snapchat</b> <br /> 2h</div>"],
-                //     ['Facebook', 140, "<div style='padding: 5px;'><b>Facebook</b> <br /> 2h</div>"]
-                // ]);
 
                 // Set chart options
                 var options = {'legend': "Aplicativos",tooltip: {isHtml: true}, 'width':400, pieHole: 0.4,  pieSliceText: "none"};
@@ -83,24 +86,81 @@
                 chart.draw(data, options);
             }
         }
+
+        function areaChartMostUsed() {
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+
+                var settings = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": "/user/9/usage/today",
+                    "method": "GET",
+                    "headers": {
+                        "content-type": "application/json"
+                    }
+                }
+
+                $.ajax(settings).done(function (apps) {
+                    var usages = [];
+                    var usageNames = ['Hour'];
+                    var hours = [3, 6, 9, 12, 15, 18, 21, 24];
+
+                    // create names of app
+                    for (i in apps) {
+                        usageNames.push(apps[i].appname);
+                    }
+
+                    // add to the usage array
+                    usages.push(usageNames);
+
+                    var pos = 0;
+                    for (hour in hours) {
+                        var newHourUsage = [];
+                        newHourUsage.push(hours[hour]);
+
+                        for (i in apps) {
+                            newHourUsage.push(apps[i].hours[pos]);
+                        }
+                        pos++;
+
+                        usages.push(newHourUsage);
+                    }
+
+                    var data = google.visualization.arrayToDataTable(usages );
+
+                    var options = {
+                        legend: {position: 'top', maxLines: 3},
+                        hAxis: {title: 'Horas',  titleTextStyle: {color: '#333'}},
+                        vAxis: {minValue: 0, maxValue: 60, title: 'Quantidade',  titleTextStyle: {color: '#333'}  }
+                    };
+
+                    var chart = new google.visualization.AreaChart(document.getElementById('areaChartMostUsed'));
+                    chart.draw(data, options);
+
+                });
+            }
+        }
     </script>
 </head>
 <body>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+    <div class="sidebar" data-color="blue" data-image="assets/img/sidebar-4.jpg">
 
         <!--
 
             Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
             Tip 2: you can also add an image using data-image tag
 
-        -->
+        -->Ï
 
         <div class="sidebar-wrapper">
             <div class="logo">
-                <a href="http://www.creative-tim.com" class="simple-text">
-                    Creative Tim
+                <a href="/" class="simple-text">
+                    Monitoramento Parental
                 </a>
             </div>
 
@@ -108,49 +168,7 @@
                 <li class="active">
                     <a href="dashboard.ftl">
                         <i class="pe-7s-graph"></i>
-                        <p>Dashboard - Monitoramento Parental</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="user.html">
-                        <i class="pe-7s-user"></i>
-                        <p>User Profile</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="table.html">
-                        <i class="pe-7s-note2"></i>
-                        <p>Table List</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="typography.html">
-                        <i class="pe-7s-news-paper"></i>
-                        <p>Typography</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="icons.html">
-                        <i class="pe-7s-science"></i>
-                        <p>Icons</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="maps.html">
-                        <i class="pe-7s-map-marker"></i>
-                        <p>Maps</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="notifications.html">
-                        <i class="pe-7s-bell"></i>
-                        <p>Notifications</p>
-                    </a>
-                </li>
-                <li class="active-pro">
-                    <a href="upgrade.html">
-                        <i class="pe-7s-rocket"></i>
-                        <p>Upgrade to PRO</p>
+                        <p class="text-center">Dashboard</p>
                     </a>
                 </li>
             </ul>
@@ -171,39 +189,7 @@
                     <a class="navbar-brand" href="#">Dashboard</a>
                 </div>
                 <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-dashboard"></i>
-                            </a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-globe"></i>
-                                <b class="caret"></b>
-                                <span class="notification">5</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Notification 1</a></li>
-                                <li><a href="#">Notification 2</a></li>
-                                <li><a href="#">Notification 3</a></li>
-                                <li><a href="#">Notification 4</a></li>
-                                <li><a href="#">Another notification</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="">
-                                <i class="fa fa-search"></i>
-                            </a>
-                        </li>
-                    </ul>
-
                     <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="">
-                                Account
-                            </a>
-                        </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Dropdown
@@ -233,16 +219,51 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Localizações</h4>
+                                <p class="sub-title"><b>Última localização:</b> Rua Tijuco Preto, 1342. <b>Data:</b> 26/11/2016 9:50</p>
+                            </div>
+                            <div id="locations" style="height: 555px; width: 100%">
+
+                            </div>
+
+                            <!-- Maps API Javascript -->
+                            <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+                            <!-- Caixa de informação -->
+                            <script src="assets/js/infobox.js"></script>
+
+                            <!-- Agrupamento dos marcadores -->
+                            <script src="assets/js/markerclusterer.js"></script>
+
+                            <!-- Arquivo de inicialização do mapa -->
+                            <script src="assets/js/map.js"></script>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="card">
                             <div class="header">
                                 <h4 class="title">Aplicativos mais usados</h4>
-                                <p class="category">Em um ano</p>
+                                <p class="category">Ontem</p>
                             </div>
-                            <div class="content" id="most_used_year">
+                            <div class="content" id="most_used_yesterday">
                                 <script type="text/javascript">
-                                    var obj = JSON.parse('{"apps": [{"name": "WhatsApp", "hours": 1000, "minutes": 45 }, {"name": "YouTube", "hours": 2500, "minutes": 54 }, {"name": "Snapchat", "hours": 700, "minutes": 41 }, {"name": "Facebook", "hours": 235, "minutes": 12 }]}');
-                                    mostUsed(obj, 'most_used_year');
+
+                                    var settings = {
+                                        "async": true,
+                                        "crossDomain": true,
+                                        "url": "/user/9/timestart/"+getDate(1)+"T00:00:00/timeend/"+getDate(1)+"T23:59:00",
+                                        "method": "GET",
+                                        "headers": {
+                                            "content-type": "application/json"
+                                        }
+                                    }
+
+                                    $.ajax(settings).done(function (response) {
+                                        mostUsed(response, 'most_used_yesterday');
+                                    });
                                 </script>
                             </div>
                         </div>
@@ -255,46 +276,20 @@
                             </div>
                             <div class="content" id="most_used_one_week">
                                 <script type="text/javascript">
-                                    var obj = JSON.parse('{"apps": [{"name": "WhatsApp", "hours": 99, "minutes": 23 }, {"name": "YouTube", "hours": 120, "minutes": 54 }, {"name": "Snapchat", "hours": 75, "minutes": 41 }, {"name": "Facebook", "hours": 98, "minutes": 12 }]}');
-                                    mostUsed(obj, 'most_used_one_week');
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Aplicativos mais usados</h4>
-                                <p class="category">Ontem</p>
-                            </div>
-                            <div class="content" id="most_used_yesterday">
-                                <script type="text/javascript">
-                                    var obj = JSON.parse('{"apps": [{"name": "WhatsApp", "hours": 6, "minutes": 23 }, {"name": "YouTube", "hours": 4, "minutes": 54 }, {"name": "Snapchat", "hours": 3, "minutes": 41 }, {"name": "Facebook", "hours": 2, "minutes": 12 }]}');
-                                    mostUsed(obj, 'most_used_yesterday');
-                                </script>
-                            </div>
-                        </div>
-                    </div>
+                                    var settings = {
+                                        "async": true,
+                                        "crossDomain": true,
+                                        "url": "/user/9/timestart/"+getDate(7)+"T00:00:00/timeend/"+getDate(0)+"T23:59:00",
+                                        "method": "GET",
+                                        "headers": {
+                                            "content-type": "application/json"
+                                        }
+                                    }
 
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Users Behavior</h4>
-                                <p class="category">24 Hours performance</p>
-                            </div>
-                            <div class="content">
-                                <div id="chartHours" class="ct-chart"></div>
-                                <div class="footer">
-                                    <div class="legend">
-                                        <i class="fa fa-circle text-info"></i> Open
-                                        <i class="fa fa-circle text-danger"></i> Click
-                                        <i class="fa fa-circle text-warning"></i> Click Second Time
-                                    </div>
-                                    <hr>
-                                    <div class="stats">
-                                        <i class="fa fa-history"></i> Updated 3 minutes ago
-                                    </div>
-                                </div>
+                                    $.ajax(settings).done(function (response) {
+                                        mostUsed(response, 'most_used_one_week');
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
@@ -302,159 +297,15 @@
 
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card ">
                             <div class="header">
-                                <h4 class="title">2014 Sales</h4>
-                                <p class="category">All products including Taxes</p>
+                                <h4 class="title">Quantidade de execuções de cada aplicativo hoje</h4>
                             </div>
-                            <div class="content">
-                                <div id="chartActivity" class="ct-chart"></div>
-
-                                <div class="footer">
-                                    <div class="legend">
-                                        <i class="fa fa-circle text-info"></i> Tesla Model S
-                                        <i class="fa fa-circle text-danger"></i> BMW 5 Series
-                                    </div>
-                                    <hr>
-                                    <div class="stats">
-                                        <i class="fa fa-check"></i> Data information certified
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="header">
-                                <h4 class="title">Tasks</h4>
-                                <p class="category">Backend development</p>
-                            </div>
-                            <div class="content">
-                                <div class="table-full-width">
-                                    <table class="table">
-                                        <tbody>
-                                        <tr>
-                                            <td>
-                                                <label class="checkbox">
-                                                    <input type="checkbox" value="" data-toggle="checkbox">
-                                                </label>
-                                            </td>
-                                            <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="Edit Task"
-                                                        class="btn btn-info btn-simple btn-xs">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Remove"
-                                                        class="btn btn-danger btn-simple btn-xs">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="checkbox">
-                                                    <input type="checkbox" value="" data-toggle="checkbox" checked="">
-                                                </label>
-                                            </td>
-                                            <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="Edit Task"
-                                                        class="btn btn-info btn-simple btn-xs">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Remove"
-                                                        class="btn btn-danger btn-simple btn-xs">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="checkbox">
-                                                    <input type="checkbox" value="" data-toggle="checkbox" checked="">
-                                                </label>
-                                            </td>
-                                            <td>Flooded: One year later, assessing what was lost and what was found when
-                                                a ravaging rain swept through metro Detroit
-                                            </td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="Edit Task"
-                                                        class="btn btn-info btn-simple btn-xs">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Remove"
-                                                        class="btn btn-danger btn-simple btn-xs">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="checkbox">
-                                                    <input type="checkbox" value="" data-toggle="checkbox">
-                                                </label>
-                                            </td>
-                                            <td>Create 4 Invisible User Experiences you Never Knew About</td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="Edit Task"
-                                                        class="btn btn-info btn-simple btn-xs">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Remove"
-                                                        class="btn btn-danger btn-simple btn-xs">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="checkbox">
-                                                    <input type="checkbox" value="" data-toggle="checkbox">
-                                                </label>
-                                            </td>
-                                            <td>Read "Following makes Medium better"</td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="Edit Task"
-                                                        class="btn btn-info btn-simple btn-xs">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Remove"
-                                                        class="btn btn-danger btn-simple btn-xs">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="checkbox">
-                                                    <input type="checkbox" value="" data-toggle="checkbox">
-                                                </label>
-                                            </td>
-                                            <td>Unfollow 5 enemies from twitter</td>
-                                            <td class="td-actions text-right">
-                                                <button type="button" rel="tooltip" title="Edit Task"
-                                                        class="btn btn-info btn-simple btn-xs">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button type="button" rel="tooltip" title="Remove"
-                                                        class="btn btn-danger btn-simple btn-xs">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <div class="footer">
-                                    <hr>
-                                    <div class="stats">
-                                        <i class="fa fa-history"></i> Updated 3 minutes ago
-                                    </div>
-                                </div>
+                            <div class="content" id="areaChartMostUsed">
+                                <script type="text/javascript">
+                                    areaChartMostUsed();
+                                </script>
                             </div>
                         </div>
                     </div>
@@ -500,9 +351,6 @@
 
 
 </body>
-
-<!--   Core JS Files   -->
-<script src="assets/js/jquery-1.10.2.js" type="text/javascript"></script>
 <script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
 
 <!--  Checkbox, Radio & Switch Plugins -->
@@ -514,30 +362,10 @@
 <!--  Notifications Plugin    -->
 <script src="assets/js/bootstrap-notify.js"></script>
 
-<!--  Google Maps Plugin    -->
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
 <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 <script src="assets/js/light-bootstrap-dashboard.js"></script>
 
 <!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
 <script src="assets/js/demo.js"></script>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        demo.initChartist();
-
-        $.notify({
-            icon: 'pe-7s-gift',
-            message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
-
-        }, {
-            type: 'info',
-            timer: 4000
-        });
-
-    });
-</script>
 
 </html>

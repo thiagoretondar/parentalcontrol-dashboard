@@ -6,5 +6,22 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
   profiles: #CONFIG DEFAULT PROFILE
     active: homolog
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        type: trace
+  freemarker:
+    cache: false
 server:
   port: 8082
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
