@@ -1,8 +1,10 @@
 package fei.tcc.controller;
 
 import fei.tcc.dto.AppQuantityDto;
+import fei.tcc.dto.LocationUsageDto;
 import fei.tcc.dto.UsageTodayDto;
 import fei.tcc.service.AppUsageService;
+import fei.tcc.service.LocationUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +28,12 @@ public class DashboardApiController {
 
     private AppUsageService appUsageService;
 
+    private LocationUsageService locationUsageService;
+
     @Autowired
-    public DashboardApiController(AppUsageService appUsageService) {
+    public DashboardApiController(AppUsageService appUsageService, LocationUsageService locationUsageService) {
         this.appUsageService = appUsageService;
+        this.locationUsageService = locationUsageService;
     }
 
     @RequestMapping(value = "/user/{userId}/timestart/{timestart}/timeend/{timeend}", method = GET)
@@ -49,7 +54,11 @@ public class DashboardApiController {
         });
 
         return usageTodayDtoList;
+    }
 
+    @RequestMapping(value = "/user/{userId}/locations")
+    public List<LocationUsageDto> getUsageLocations(@PathVariable("userId") Integer userId) {
+        return locationUsageService.getLocations(userId);
     }
 
 }

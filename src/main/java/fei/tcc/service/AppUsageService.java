@@ -68,7 +68,7 @@ public class AppUsageService {
             quantityForEachAppRepository.forEach((appname, quantity) -> {
                 if (appsUsedToday.containsKey(appname)) {
                     List<Integer> hoursList = appsUsedToday.get(appname);
-                    hoursList.set(position, quantity);
+                        hoursList.set(position, quantity);
                 } else {
                     ArrayList<Integer> newHours = new ArrayList<>(nCopies(hours.size(), 0));
                     newHours.set(position, quantity);

@@ -222,7 +222,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Localizações</h4>
+                                <h4 class="title">Localizações nas últimas 24h</h4>
                                 <p class="sub-title"><b>Última localização:</b> Rua Tijuco Preto, 1342. <b>Data:</b> 26/11/2016 9:50</p>
                             </div>
                             <div id="locations" style="height: 555px; width: 100%">
