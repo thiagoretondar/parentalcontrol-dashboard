@@ -230,7 +230,7 @@
                             </div>
 
                             <!-- Maps API Javascript -->
-                            <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+                            <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDGL4Jhzw69Its-E0kqMMieUhtZlv2tn1U&sensor=false"></script>
 
                             <!-- Caixa de informação -->
                             <script src="assets/js/infobox.js"></script>
