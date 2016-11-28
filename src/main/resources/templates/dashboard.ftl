@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="assets/img/favicon.ico">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-    <title>Light Bootstrap Dashboard by Creative Tim</title>
+    <title>Dashboard - Monitoramento Parental</title>
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
     <meta name="viewport" content="width=device-width"/>
@@ -154,7 +154,7 @@
                 <li class="active">
                     <a href="dashboard.ftl">
                         <i class="pe-7s-graph"></i>
-                        <p class="text-center">${username}</p>
+                        <p class="text-center">Dashboard</p>
                     </a>
                 </li>
             </ul>
@@ -172,7 +172,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Dashboard</a>
+                    <a class="navbar-brand" href="#">${username}</a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
