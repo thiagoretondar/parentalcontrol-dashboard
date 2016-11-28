@@ -3,8 +3,10 @@ package fei.tcc.controller;
 import fei.tcc.dto.AppQuantityDto;
 import fei.tcc.dto.LocationUsageDto;
 import fei.tcc.dto.UsageTodayDto;
+import fei.tcc.dto.UsersRegisteredDto;
 import fei.tcc.service.AppUsageService;
 import fei.tcc.service.LocationUsageService;
+import fei.tcc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,10 +32,13 @@ public class DashboardApiController {
 
     private LocationUsageService locationUsageService;
 
+    private UserService userService;
+
     @Autowired
-    public DashboardApiController(AppUsageService appUsageService, LocationUsageService locationUsageService) {
+    public DashboardApiController(AppUsageService appUsageService, LocationUsageService locationUsageService, UserService userService) {
         this.appUsageService = appUsageService;
         this.locationUsageService = locationUsageService;
+        this.userService = userService;
     }
 
     @RequestMapping(value = "/user/{userId}/timestart/{timestart}/timeend/{timeend}", method = GET)
@@ -59,6 +64,11 @@ public class DashboardApiController {
     @RequestMapping(value = "/user/{userId}/locations")
     public List<LocationUsageDto> getUsageLocations(@PathVariable("userId") Integer userId) {
         return locationUsageService.getLocations(userId);
+    }
+
+        @RequestMapping(value = "/parent/{parentId}/users")
+    public List<UsersRegisteredDto> getUsers(@PathVariable("parentId") Integer parentId) {
+        return userService.getUsers(parentId);
     }
 
 }

@@ -9,8 +9,7 @@
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
     <meta name="viewport" content="width=device-width"/>
-
-
+    <base href="/" />
     <!-- Bootstrap core CSS     -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
 
@@ -34,6 +33,7 @@
     <script src="assets/js/jquery-1.10.2.js" type="text/javascript"></script>
 
     <script type="text/javascript">
+        var userId = ${userId};
         function getDate(daysBefore) {
             var todayTimeStamp = +new Date; // Unix timestamp in milliseconds
             var oneDayTimeStamp = 1000 * 60 * 60 * 24 * daysBefore; // Milliseconds in a day
@@ -77,12 +77,6 @@
                 // Instantiate and draw our chart, passing in some options.
                 var chart = new google.visualization.PieChart(document.getElementById(id));
 
-                function selectHandler() {
-                    alert("Testing");
-                }
-
-                google.visualization.events.addListener(chart, 'select', selectHandler);
-
                 chart.draw(data, options);
             }
         }
@@ -96,7 +90,7 @@
                 var settings = {
                     "async": true,
                     "crossDomain": true,
-                    "url": "/user/9/usage/today",
+                    "url": "/user/"+ ${userId} +"/usage/today",
                     "method": "GET",
                     "headers": {
                         "content-type": "application/json"
@@ -146,17 +140,9 @@
     </script>
 </head>
 <body>
-
+<input type="hidden" value="${userId}" id="userId" />
 <div class="wrapper">
     <div class="sidebar" data-color="blue" data-image="assets/img/sidebar-4.jpg">
-
-        <!--
-
-            Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-            Tip 2: you can also add an image using data-image tag
-
-        -->Ï
-
         <div class="sidebar-wrapper">
             <div class="logo">
                 <a href="/" class="simple-text">
@@ -168,7 +154,7 @@
                 <li class="active">
                     <a href="dashboard.ftl">
                         <i class="pe-7s-graph"></i>
-                        <p class="text-center">Dashboard</p>
+                        <p class="text-center">${username}</p>
                     </a>
                 </li>
             </ul>
@@ -192,23 +178,15 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                Dropdown
+                                Usuários
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
+
+                                <#list usersList as user>
+                                    <li><a href="/user/${user.id}" class="chooseUser">${user.name}</a></li>
+                                </#list>
                             </ul>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Log out
-                            </a>
                         </li>
                     </ul>
                 </div>
@@ -223,7 +201,6 @@
                         <div class="card">
                             <div class="header">
                                 <h4 class="title">Localizações nas últimas 24h</h4>
-                                <p class="sub-title"><b>Última localização:</b> Rua Tijuco Preto, 1342. <b>Data:</b> 26/11/2016 9:50</p>
                             </div>
                             <div id="locations" style="height: 555px; width: 100%">
 
@@ -254,7 +231,7 @@
                                     var settings = {
                                         "async": true,
                                         "crossDomain": true,
-                                        "url": "/user/9/timestart/"+getDate(1)+"T00:00:00/timeend/"+getDate(1)+"T23:59:00",
+                                        "url": "/user/"+ ${userId} +"/timestart/"+getDate(1)+"T00:00:00/timeend/"+getDate(1)+"T23:59:00",
                                         "method": "GET",
                                         "headers": {
                                             "content-type": "application/json"
@@ -279,7 +256,7 @@
                                     var settings = {
                                         "async": true,
                                         "crossDomain": true,
-                                        "url": "/user/9/timestart/"+getDate(7)+"T00:00:00/timeend/"+getDate(0)+"T23:59:00",
+                                        "url": "/user/"+ ${userId} +"/timestart/"+getDate(7)+"T00:00:00/timeend/"+getDate(0)+"T23:59:00",
                                         "method": "GET",
                                         "headers": {
                                             "content-type": "application/json"

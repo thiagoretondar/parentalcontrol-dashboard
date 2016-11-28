@@ -64,6 +64,10 @@ public class AppUsageService {
             LocalDateTime hourEnd = LocalDateTime.of(today, LocalTime.of(hour, 0));
             LocalDateTime hourStart = hourEnd.minusHours(3);
 
+            // force be the same day
+            hourStart = hourStart.withDayOfMonth(today.getDayOfMonth());
+
+            System.out.println(hourStart + " - " + hourEnd);
             LinkedHashMap<String, Integer> quantityForEachAppRepository = appUsageRepository.getQuantityForEachAppRepository(userId, hourStart, hourEnd);
             quantityForEachAppRepository.forEach((appname, quantity) -> {
                 if (appsUsedToday.containsKey(appname)) {
