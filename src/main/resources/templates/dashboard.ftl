@@ -40,7 +40,10 @@
             var diff = todayTimeStamp - oneDayTimeStamp;
             var newDate = new Date(diff);
 
-            return newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate();
+            var newMonth = (newDate.getMonth() + 1) > 9 ? (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
+            var newDay = newDate.getDate() > 9 ? newDate.getDate() : "0" + newDate.getDate();
+
+            return newDate.getFullYear() + '-' + newMonth + '-' + newDay;
         }
     </script>
 
